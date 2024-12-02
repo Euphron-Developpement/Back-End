@@ -33,9 +33,11 @@ model Tag {
 
 model Article_Tags {
   article    Article @relation(fields: [article_id], references: [id])
-  article_id Int     @unique
+  article_id Int
   tag        Tag     @relation(fields: [tag_id], references: [id])
-  tag_id     Int     @unique
+  tag_id     Int
+
+  @@id([article_id, tag_id])
 }
 
 model Article {
