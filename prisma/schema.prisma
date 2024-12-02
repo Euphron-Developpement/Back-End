@@ -12,3 +12,58 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id         Int       @id @default(autoincrement())
+  first_name String
+  last_name  String
+  email      String    @unique
+  password   String
+  role       String
+  Article    Article[]
+}
+
+model Tag {
+  id           Int            @id @default(autoincrement())
+  label        String
+  icon         String?
+  color        String         @unique
+  Article_Tags Article_Tags[]
+}
+
+model Article_Tags {
+  article    Article @relation(fields: [article_id], references: [id])
+  article_id Int     @unique
+  tag        Tag     @relation(fields: [tag_id], references: [id])
+  tag_id     Int     @unique
+}
+
+model Article {
+  id               Int            @id @default(autoincrement())
+  title            String
+  read_time        Int
+  publication_date DateTime
+  category         Int
+  author           User           @relation(fields: [authorId], references: [id])
+  authorId         Int
+  content          String
+  interview_time   Int?
+  Media            Media[]
+  Article_Tags     Article_Tags[]
+}
+
+model Media {
+  id         Int        @id @default(autoincrement())
+  url        String
+  article    Article    @relation(fields: [article_id], references: [id])
+  article_id Int
+  hero       Boolean
+  type       Media_Type @relation(fields: [type_id], references: [id])
+  type_id    Int
+}
+
+model Media_Type {
+  id    Int     @id @default(autoincrement())
+  label String
+  Media Media[]
+}
