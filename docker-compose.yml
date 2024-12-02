@@ -3,33 +3,34 @@ version: '3.8'
 services:
   app:
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: nest-api
     ports:
       - "3000:3000"
     depends_on:
       - db
     environment:
-      - DB_HOST=db
+      - DB_HOST=localhost
       - DB_PORT=3306
-      - DB_USER=website
-      - DB_PASSWORD=your_password
-      - DB_NAME=digity-website
+      - DB_USER=jarvis
+      - DB_PASSWORD=jarvis
+      - DB_NAME=euphron
     volumes:
       - .:/usr/src/app
-    command: ["node", "dist/main"]
+      - /usr/src/app/dist
+    command: [ "npm", "run", "prod" ]
 
   db:
     image: mariadb:11.5
     container_name: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: euphron
-      MYSQL_USER: jarvis
-      MYSQL_PASSWORD: jarvis
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: euphron
+      MARIADB_USER: jarvis
+      MARIADB_PASSWORD: jarvis
     ports:
-      - "3306:3306"
+      - "4587:3306"
     volumes:
       - db_data:/var/lib/mysql
 
