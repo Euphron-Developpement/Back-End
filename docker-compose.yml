@@ -3,8 +3,8 @@ version: '3.8'
 services:
   app:
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: nest-api
     ports:
       - "3000:3000"
@@ -15,10 +15,11 @@ services:
       - DB_PORT=3306
       - DB_USER=website
       - DB_PASSWORD=your_password
-      - DB_NAME=digity-website
+      - DB_NAME=euphron
     volumes:
       - .:/usr/src/app
-    command: ["node", "dist/main"]
+      - /usr/src/app/dist
+    command: [ "npm", "run", "prod" ]
 
   db:
     image: mariadb:11.5
