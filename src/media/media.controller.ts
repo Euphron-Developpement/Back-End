@@ -13,8 +13,8 @@ export class MediaController {
 
     //Récupération d'un media
     @Get(':id')
-    findOne(@Param('id') _id: number) {
-        return this.mediaService.findOne(+_id);
+    findOne(@Param('id') id: string) {
+        return this.mediaService.findOne(+id);
     }
 
     //Ajout d'un media
