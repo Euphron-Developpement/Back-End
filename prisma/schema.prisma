@@ -45,10 +45,10 @@ model Article {
   title            String         @db.VarChar(200)
   read_time        Int
   publication_date DateTime
-  category         Category       @relation(fields: [category_id], references: [id])
-  category_id      Int
-  author           User           @relation(fields: [authorId], references: [id])
-  authorId         Int
+  category_id      Category       @relation(fields: [category], references: [id])
+  category         Int
+  author_Id        User           @relation(fields: [author], references: [id])
+  author           Int
   content          String         @db.Text()
   interview_time   Int?
   Media            Media[]
@@ -58,11 +58,11 @@ model Article {
 model Media {
   id         Int        @id @default(autoincrement())
   url        String     @db.VarChar(200)
-  article    Article    @relation(fields: [article_id], references: [id])
-  article_id Int
+  article_Id Article    @relation(fields: [article], references: [id])
+  article    Int
   hero       Boolean
-  type       Media_Type @relation(fields: [type_id], references: [id])
-  type_id    Int
+  type_id    Media_Type @relation(fields: [type], references: [id])
+  type       Int
 }
 
 model Media_Type {
