@@ -45,7 +45,8 @@ model Article {
   title            String         @db.VarChar(200)
   read_time        Int
   publication_date DateTime
-  category         Int
+  category         Category       @relation(fields: [category_id], references: [id])
+  category_id      Int
   author           User           @relation(fields: [authorId], references: [id])
   authorId         Int
   content          String         @db.Text()
@@ -68,4 +69,10 @@ model Media_Type {
   id    Int     @id @default(autoincrement())
   label String  @db.VarChar(200)
   Media Media[]
+}
+
+model Category {
+  id      Int       @id @default(autoincrement())
+  label   String    @db.VarChar(200)
+  Article Article[]
 }
