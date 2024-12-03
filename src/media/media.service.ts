@@ -1,64 +1,54 @@
 import { Injectable } from '@nestjs/common';
-import { media } from '../interfaces/media.interface';
+// import { CreateMediaDto } from './dto/create-media.dto';
+// import { UpdateMediaDto } from './dto/update-media.dto';
+import { Media, Prisma } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class MediaService {
 
-    private medias: media[] = [
-        {
-            id: 1, 
-            url: "https://docs.nestjs.com/controllers#routing",
-            article_id: 2,
-            hero: true,
-            type: 1,
-        },
-        {
-            id: 2, 
-            url: "https://docs.nestjs.com/controllers#routing",
-            article_id: 3,
-            hero: false,
-            type: 2,
-        }
-    ];
+  constructor(private prisma: PrismaService) {}
 
-    private currentId = 3;
+  // create(createMediaDto: CreateMediaDto) {
+  //   return 'This action adds a new media';
+  // }
 
-    //Récupération de tous les medias
-    findAll() {
-        return this.medias;
-    }
+  // findAll() {
+  //   return `This action returns all media`;
+  // }
 
-    //Récupération d'un media
-    findOne(_id: number) {
-        return this.medias.find((medias) => medias.id === _id);
-    }
+  //Récupération d'un media
+  async findOneMedia(
+    mediaWhereUniqueInput: Prisma.MediaWhereUniqueInput,
+  ): Promise<Media | null> {
+    return this.prisma.media.findUnique({
+            where: mediaWhereUniqueInput,
+    });
+  }
 
-    //Création d'un nouveau media
-    create(media: { url: string; article_id: number ; hero: boolean; type: number;}) {
-        const newMedia = { id: this.currentId++, ...media }; // Ajout d'un ID unique
-        this.medias.push(newMedia);
-        return newMedia;
-    }
+  //Récupération de tous les medias
+  async findAllMedia(params: {
+    skip?: number; // Nombre d'enregistrements à sauter (pour la pagination).
+    take?: number; // Nombre maximal d'enregistrements à récupérer.
+    cursor?: Prisma.MediaWhereUniqueInput; // Point de départ pour la pagination par curseur.
+    where?: Prisma.MediaWhereInput; // Conditions pour filtrer les enregistrements.
+    orderBy?: Prisma.MediaOrderByWithRelationInput; // Critères de tri des enregistrements.
+  }): Promise<Media[]> {
+    const { skip, take, cursor, where, orderBy } = params;
+    return this.prisma.media.findMany({
+      skip,
+      take,
+      cursor,
+      where,
+      orderBy,
+    });
+  }
 
-    //Suppresion d'un media
-    delete(id: number) {
-        const mediaIndex = this.medias.findIndex((media) => media.id === id);
-        if (mediaIndex === -1) {
-            return { error: `Media with ID ${id} not found` };
-        }
-    
-        const deletedMedia = this.medias.splice(mediaIndex, 1);
-        return deletedMedia[0];
-    }
+  // update(id: number, updateMediaDto: UpdateMediaDto) {
+  //   return `This action updates a #${id} media`;
+  // }
 
-    //Modification d'un media
-    update(id: number, updatedMedia: Partial<{ url: string; article_id: number; hero: boolean; type: number; }>) {
-        const mediaIndex = this.medias.findIndex((media) => media.id === id);
-        if (mediaIndex === -1) {
-            return { error: `Media with ID ${id} not found` };
-        }
-    
-        this.medias[mediaIndex] = { ...this.medias[mediaIndex], ...updatedMedia };
-        return this.medias[mediaIndex];
-    }
+  remove(id: number) {
+    return `This action removes a #${id} media`;
+  }
 }
