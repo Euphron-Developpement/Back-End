@@ -10,8 +10,8 @@ async function main() {
   for (let i = 0; i < 10; i++) {
     await prisma.user.create({
       data: {
-        first_name: faker.name.firstName(),
-        last_name: faker.name.lastName(),
+        first_name: faker.person.firstName(),
+        last_name: faker.person.lastName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
         role: faker.helpers.arrayElement(['admin', 'editor', 'viewer']),
@@ -53,7 +53,7 @@ async function main() {
   for (let i = 0; i < 10; i++) {
     const tag = await prisma.tag.create({
       data: {
-        label: faker.lorem.word(),
+        label: faker.word.noun(),
         color: faker.color.rgb({ format: 'hex' }),
       },
     });
