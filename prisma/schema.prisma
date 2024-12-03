@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  first_name String    @db.VarChar(255)
+  last_name  String    @db.VarChar(255)
+  email      String    @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  role       String    @db.VarChar(255)
+  Article    Article[]
+  Order      Order[]
+}
+
+model Tag {
+  id           Int            @id @default(autoincrement())
+  label        String         @db.VarChar(255)
+  icon         String?        @db.VarChar(255)
+  color        String         @db.VarChar(255)
+  Article_Tags Article_Tags[]
+}
+
+model Article_Tags {
+  article    Article @relation(fields: [article_id], references: [id])
+  article_id Int
+  tag        Tag     @relation(fields: [tag_id], references: [id])
+  tag_id     Int
+
+  @@id([article_id, tag_id])
+}
+
+model Article {
+  id               Int            @id @default(autoincrement())
+  title            String         @db.VarChar(255)
+  read_time        Int
+  publication_date DateTime
+  category_id      Category       @relation(fields: [category], references: [id])
+  category         Int
+  author_Id        User           @relation(fields: [author], references: [id])
+  author           Int
+  content          String         @db.Text()
+  interview_time   Int?
+  Media            Media[]
+  Article_Tags     Article_Tags[]
+}
+
+model Media {
+  id         Int        @id @default(autoincrement())
+  url        String     @db.VarChar(255)
+  article_Id Article    @relation(fields: [article], references: [id])
+  article    Int
+  hero       Boolean
+  type_id    Media_Type @relation(fields: [type], references: [id])
+  type       Int
+}
+
+model Media_Type {
+  id    Int     @id @default(autoincrement())
+  label String  @db.VarChar(255)
+  Media Media[]
+}
+
+model Category {
+  id      Int       @id @default(autoincrement())
+  label   String    @db.VarChar(255)
+  Article Article[]
+}
+
+model Event {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(255)
+  start_date  DateTime
+  end_date    DateTime
+  location    String        @db.VarChar(255)
+  slot        Int
+  alcool      Boolean
+  Reservation Reservation[]
+}
+
+model Reservation {
+  id           Int           @id @default(autoincrement())
+  first_name   String        @db.VarChar(255)
+  last_name    String        @db.VarChar(255)
+  companion_id Int?
+  companion    Reservation?  @relation("ReservationToCompanion", fields: [companion_id], references: [id])
+  companions   Reservation[] @relation("ReservationToCompanion")
+  order_id     Order         @relation(fields: [order], references: [id])
+  order        Int
+  code         String        @db.VarChar(255)
+  pdf          Bytes         @db.Blob
+  event        Event         @relation(fields: [event_id], references: [id])
+  event_id     Int
+}
+
+model Order {
+  id      Int  @id @default(autoincrement())
+  user    User @relation(fields: [user_Id], references: [id])
+  user_Id Int
+
+  Reservation Reservation[]
+}

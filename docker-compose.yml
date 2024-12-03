@@ -12,7 +12,7 @@ services:
       - db
     environment:
       - DB_HOST=localhost
-      - DB_PORT=3306
+      - DB_PORT=4587
       - DB_USER=jarvis
       - DB_PASSWORD=jarvis
       - DB_NAME=euphron
