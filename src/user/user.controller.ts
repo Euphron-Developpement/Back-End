@@ -1,52 +1,52 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query } from '@nestjs/common';
-import { UserService } from './user.service';
-
-@Controller('user')
-export class UserController {
+import {
+    Controller,
+    Get,
+    Post,
+    Put,
+    Delete,
+    Param,
+    Body,
+    HttpException,
+    HttpStatus,
+  }from '@nestjs/common';
+  import { UserService } from './user.service';
+  import { Prisma } from '@prisma/client';
+  
+  @Controller('users') // Base path for the routes
+  export class UserController {
     constructor(private readonly userService: UserService) {}
-
+  
     @Get()
-    findAll() {
-        return this.userService.findAll();
+    async findAll() {
+      return this.userService.findAll();
     }
-
+  
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.userService.findOne(+id);
+    async findOne(@Param('id') id: string) {
+      const user = await this.userService.findOne(Number(id));
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      return user;
     }
-
+  
     @Post()
-    create(@Body() user: { name: string; last_name: string ; email: string; password: string; role: string;}) {
-        return this.userService.create(user);
+    async create(@Body() data: Prisma.UserCreateInput) {
+      return this.userService.create(data);
     }
-    
-    // @Put(':id')
-    // update(
-    //     @Param('id') id: string,
-    //     @Body() updatedUser: Partial<{ name: string; prenom: string; email: string; password: string; role: string }>,
-    // ){
-    //     return this.userService.update(+id, updatedUser);
-    // }
-
-    @Patch()
-    update(
-        @Query('id') id: string,
-        @Body() updatedUser: { name?: string; last_name?: string; email?: string; password?: string; role?: string },
-    ) {
-        return this.userService.update(+id, updatedUser);
+  
+    @Put(':id')
+    async update(@Param('id') id: string, @Body() updatedData: Prisma.UserUpdateInput) {
+      return this.userService.update(Number(id), updatedData);
     }
-
-    // @Delete(':id')
-    // delete(@Param('id') id: string) {
-    //     return this.userService.delete(+id);
-    // }
-
-    @Delete()
-    delete(@Query('id') id: string) {
-      return this.userService.delete(+id);
+  
+    @Delete(':id')
+    async delete(@Param('id') id: string) {
+      const user = await this.userService.delete(Number(id));
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      return user;
     }
-}
-
-
-
-
+  }
+  

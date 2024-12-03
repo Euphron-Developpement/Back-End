@@ -1,49 +1,36 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { User, Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-    private users = [
-        { id: 1, name: "stephane", last_name: "brayane", email: "stephanefoyet@gmail.com", password: "123456", role: "admin" },
-        {id: 2, name: "yann", last_name: "junior", email: "yannjunior@gmail.com", password: "123456", role: "admin" },
-    ];
+  constructor(private prisma: PrismaService) {}
 
-    private currentId = 3;
+  async findAll(): Promise<User[]> {
+    return this.prisma.user.findMany();
+  }
 
+  async findOne(id: number): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
 
-    
-    findAll() {
-        return this.users;
+  async create(data: Prisma.UserCreateInput) {
+    return this.prisma.user.create({ data });
+  }
+
+  async update(id: number, data: Prisma.UserUpdateInput) {
+    return this.prisma.user.update({ where: { id }, data });
+  }
+
+  async delete(id: number): Promise<User | null> {
+    try {
+      return await this.prisma.user.delete({
+        where: { id },
+      });
+    } catch (error) {
+      return null; // Return null if the user doesn't exist or another error occurs
     }
-
-    findOne(id: number) {
-        return this.users.find((user) => user.id === id);
-    }
-
-    create(user: { name: string; last_name: string ; email: string; password: string; role: string }) {
-        const newUser = { id: this.currentId++, ...user }; // Ajout d'un ID unique
-        this.users.push(newUser);
-        return newUser;
-    }
-    
-    update(id: number, updatedUser: Partial<{ name: string; last_name: string; email: string; password: string; role: string }>) {
-        const userIndex = this.users.findIndex((user) => user.id === id);
-        if (userIndex === -1) {
-            return { error: `User with ID ${id} not found` };
-        }
-    
-        this.users[userIndex] = { ...this.users[userIndex], ...updatedUser };
-        return this.users[userIndex];
-    }
-        
-    delete(id: number) {
-        const userIndex = this.users.findIndex((user) => user.id === id);
-        if (userIndex === -1) {
-            return { error: `User with ID ${id} not found` };
-        }
-    
-        const deletedUser = this.users.splice(userIndex, 1);
-        return deletedUser[0];
-    }
-
+  }
 }
-
