@@ -1,42 +1,41 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Article, Prisma } from '@prisma/client';
 
 @Injectable()
 export class ArticleService {
-  private articles = [
-    { id: 1, title: 'Article 1', readTime: 5, categoryId: 1, publicationDate: new Date() },
-    { id: 2, title: 'Article 2', readTime: 10, categoryId: 2, publicationDate: new Date() },
-  ];
+  constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.articles;
+  async findAll(): Promise<Article[]> {
+    return this.prisma.article.findMany();
   }
 
-  findOne(id: number) {
-    return this.articles.find((article) => article.id === id);
+  async findOne(id: number): Promise<Article | null> {
+    return this.prisma.article.findUnique({
+      where: { id },
+    });
   }
 
-  create(createArticleDto: any) {
-    const newArticle = { id: this.articles.length + 1, ...createArticleDto };
-    this.articles.push(newArticle);
-    return newArticle;
+  async create(data: Prisma.ArticleCreateInput): Promise<Article> {
+    return this.prisma.article.create({
+      data,
+    });
   }
 
-  update(id: number, updateArticleDto: any) {
-    const articleIndex = this.articles.findIndex((article) => article.id === id);
-    if (articleIndex === -1) return null;
-
-    this.articles[articleIndex] = {
-      ...this.articles[articleIndex],
-      ...updateArticleDto,
-    };
-    return this.articles[articleIndex];
+  async update(id: number, data: Prisma.ArticleUpdateInput): Promise<Article> {
+    return this.prisma.article.update({
+      where: { id },
+      data,
+    });
   }
 
-  remove(id: number) {
-    const articleIndex = this.articles.findIndex((article) => article.id === id);
-    if (articleIndex === -1) return null;
-
-    const deletedArticle = this.articles.splice(articleIndex, 1);
-    return deletedArticle;
+  async delete(id: number): Promise<Article | null> {
+    try {
+      return await this.prisma.article.delete({
+        where: { id },
+      });
+    } catch (error) {
+      return null;
+    }
   }
 }
