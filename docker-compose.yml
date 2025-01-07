@@ -21,7 +21,7 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/dist
-    command: [ "npm", "run", "prod" ]
+    command: [ "npm", "run", "start:prod" ]
 
   app_dev:
     build:
