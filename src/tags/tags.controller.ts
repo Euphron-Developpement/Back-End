@@ -20,8 +20,8 @@ export class TagsController {
     }
 
     @Patch(':id')
-    update(
-    @Param('id') id: string,
+        update(
+        @Param('id') id: string,
     @Body() updatedTag: Partial<{ label: string; icon: string; color: string }>,
     ) {
         return this.tagsService.update(+id, updatedTag); // Convertit l'ID en nombre
@@ -31,7 +31,4 @@ export class TagsController {
     delete(@Query('id') id: string) {
       return this.tagsService.delete(+id);
     }
-
-
-
 }
