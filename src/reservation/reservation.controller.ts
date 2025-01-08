@@ -12,7 +12,7 @@ import {
   import { ReservationService } from './reservation.service';
   import { Prisma } from '@prisma/client';
   
-  @Controller('users') // Base path for the routes
+  @Controller('reservation') // Base path for the routes
   export class ReservationController {
     constructor(private readonly reservationService: ReservationService) {}
   
