@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
     environment:
-      - DB_HOST=localhost
+      - DB_HOST=db
       - DB_PORT=4587
       - DB_USER=jarvis
       - DB_PASSWORD=jarvis
@@ -33,7 +33,7 @@ services:
     depends_on:
       - db
     environment:
-      - DB_HOST=localhost
+      - DB_HOST=db
       - DB_PORT=4587
       - DB_USER=jarvis
       - DB_PASSWORD=jarvis
