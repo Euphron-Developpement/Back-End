@@ -1,54 +1,36 @@
 import { Injectable } from '@nestjs/common';
-// import { CreateMediaDto } from './dto/create-media.dto';
-// import { UpdateMediaDto } from './dto/update-media.dto';
 import { Media, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class MediaService {
-
   constructor(private prisma: PrismaService) {}
 
-  // create(createMediaDto: CreateMediaDto) {
-  //   return 'This action adds a new media';
-  // }
+  async findAll(): Promise<Media[]> {
+    return this.prisma.media.findMany();
+  }
 
-  // findAll() {
-  //   return `This action returns all media`;
-  // }
-
-  //Récupération d'un media
-  async findOneMedia(
-    mediaWhereUniqueInput: Prisma.MediaWhereUniqueInput,
-  ): Promise<Media | null> {
+  async findOne(id: number): Promise<Media | null> {
     return this.prisma.media.findUnique({
-            where: mediaWhereUniqueInput,
+      where: { id },
     });
   }
 
-  //Récupération de tous les medias
-  async findAllMedia(params: {
-    skip?: number; // Nombre d'enregistrements à sauter (pour la pagination).
-    take?: number; // Nombre maximal d'enregistrements à récupérer.
-    cursor?: Prisma.MediaWhereUniqueInput; // Point de départ pour la pagination par curseur.
-    where?: Prisma.MediaWhereInput; // Conditions pour filtrer les enregistrements.
-    orderBy?: Prisma.MediaOrderByWithRelationInput; // Critères de tri des enregistrements.
-  }): Promise<Media[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.media.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
+  async create(data: Prisma.MediaCreateInput) {
+    return this.prisma.media.create({ data });
   }
 
-  // update(id: number, updateMediaDto: UpdateMediaDto) {
-  //   return `This action updates a #${id} media`;
-  // }
+  async update(id: number, data: Prisma.MediaUpdateInput) {
+    return this.prisma.media.update({ where: { id }, data });
+  }
 
-  remove(id: number) {
-    return `This action removes a #${id} media`;
+  async delete(id: number): Promise<Media | null> {
+    try {
+      return await this.prisma.media.delete({
+        where: { id },
+      });
+    } catch (error) {
+      return null;
+    }
   }
 }
