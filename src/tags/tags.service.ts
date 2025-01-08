@@ -1,44 +1,53 @@
 import { Injectable } from '@nestjs/common';
-
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma, Tag } from '@prisma/client';
 
 @Injectable()
 export class TagsService {
-    private tags = [{id: 1, label: "xx", icon: "aa", color: "#ffedjf"},];
-    private currentId = 1;
+  constructor(private prisma: PrismaService) {}
 
-    findAll() {
-        return this.tags;
+  // Récupérer tous les tags
+  async findAll(): Promise<Tag[]> {
+    return this.prisma.tag.findMany();
+  }
+
+  // Récupérer un tag spécifique par ID
+  async findOne(id: number): Promise<Tag | null> {
+    return this.prisma.tag.findUnique({
+      where: { id },
+    });
+  }
+
+  // Créer un nouveau tag
+  async create(data: Prisma.TagCreateInput): Promise<Tag> {
+    return this.prisma.tag.create({
+      data,
+    });
+  }
+
+  // Mettre à jour un tag existant
+  async update(
+    id: number,
+    data: Prisma.TagUpdateInput,
+  ): Promise<Tag | { error: string }> {
+    try {
+      return this.prisma.tag.update({
+        where: { id },
+        data,
+      });
+    } catch (error) {
+      return { error: `Tag with ID ${id} not found` };
     }
+  }
 
-    findOne(id: number) {
-        return this.tags.find((tag) => tag.id === id);
+  // Supprimer un tag
+  async delete(id: number): Promise<Tag | { error: string }> {
+    try {
+      return this.prisma.tag.delete({
+        where: { id },
+      });
+    } catch (error) {
+      return { error: `Tag with ID ${id} not found` };
     }
-
-    create(tag: { label: string; icon: string ; color: string }) {
-        const newTag = { id: this.currentId++, ...tag }; // Ajout d'un ID unique
-        this.tags.push(newTag);
-        return newTag;
-    }
-
-    update(id: number, updatedTag: Partial<{ label: string; icon: string ; color: string }>) {
-        const tagIndex = this.tags.findIndex((tag) => tag.id === id);
-        if (tagIndex === -1) {
-            return { error: `tag with ID ${id} not found` };
-        }
-    
-        this.tags[tagIndex] = { ...this.tags[tagIndex], ...updatedTag };
-        return this.tags[tagIndex];
-    }
-
-    delete(id: number) {
-        const tagIndex = this.tags.findIndex((tag) => tag.id === id);
-        if (tagIndex === -1) {
-            return { error: `tag with ID ${id} not found` };
-        }
-    
-        const deletedTag = this.tags.splice(tagIndex, 1);
-        return deletedTag[0];
-    }
-      
-
+  }
 }
