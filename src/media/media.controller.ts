@@ -13,11 +13,11 @@ export class MediaController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const user = await this.mediaService.findOne(Number(id));
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const media = await this.mediaService.findOne(Number(id));
+    if (!media) {
+      throw new HttpException('Media not found', HttpStatus.NOT_FOUND);
     }
-    return user;
+    return media;
   }
 
   @Post()
@@ -32,10 +32,10 @@ export class MediaController {
 
   @Delete(':id')
     async delete(@Param('id') id: string) {
-      const user = await this.mediaService.delete(Number(id));
-      if (!user) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      const media = await this.mediaService.delete(Number(id));
+      if (!media) {
+        throw new HttpException('Media not found', HttpStatus.NOT_FOUND);
       }
-      return user;
+      return media;
   }
 }
