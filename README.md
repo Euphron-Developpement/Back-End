@@ -8,6 +8,7 @@ API générale d'Euphron - Une API RESTful construite avec NestJS pour gérer le
 $ docker-compose up app db -d
 ```
 > (app ou app-dev en fonction de l'environnement)
+### Configuration de l'application
 - Installation des dépendances
 ```bash
 $ npm install
@@ -16,6 +17,15 @@ $ npm install
 ```bash
 $ npx prisma migrate dev
 ```
+- Création de droits en BDD pour l'utilisateur
+```bash
+docker exec -it mariadb mariadb -u root -proot -e "GRANT ALL PRIVILEGES ON euphron.* TO 'jarvis'@'%' IDENTIFIED BY 'jarvis';"
+```
+- Création du fichier env
+```dotenv
+DATABASE_URL=mysql://user:password@host.docker.internal:4587/euphron
+```
+
 ## Lancer les tests
 
 ```bash
