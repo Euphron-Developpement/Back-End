@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Put,
+  Patch,
   Delete,
   Param,
   Body,
@@ -21,7 +21,7 @@ export class UserController {
   async findAll() {
     return this.userService.findAll();
   }
-  
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const user = await this.userService.findOne(Number(id));
@@ -43,7 +43,7 @@ export class UserController {
     }
   }
 
-  @Put(':id')
+  @Patch(':id') // Utilisation de PATCH pour les mises à jour partielles
   async update(
     @Param('id') id: string,
     @Body() updatedData: Prisma.UserUpdateInput,
