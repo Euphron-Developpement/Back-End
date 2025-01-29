@@ -1,37 +1,41 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Query } from '@nestjs/common';
 import { TagsService } from './tags.service';
+import { Prisma } from '@prisma/client';
+
 @Controller('tags')
 export class TagsController {
-    constructor(private readonly tagsService: TagsService) {}
+  constructor(private readonly tagsService: TagsService) {}
 
-    @Get()
-    findAll() {
-        return this.tagsService.findAll();
-    }
+  // Récupérer tous les tags
+  @Get()
+  async findAll() {
+    return await this.tagsService.findAll();
+  }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.tagsService.findOne(+id);
-    }
+  // Récupérer un tag spécifique par ID
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.tagsService.findOne(+id); // Convertit l'ID string en number
+  }
 
-    @Post()
-    create(@Body() tag: { label: string; icon: string ; color: string}) {
-        return this.tagsService.create(tag);
-    }
+  // Créer un nouveau tag
+  @Post()
+  async create(@Body() tag: Prisma.TagCreateInput) {
+    return await this.tagsService.create(tag);
+  }
 
-    @Patch(':id')
-    update(
+  // Mettre à jour un tag existant
+  @Patch(':id')
+  async update(
     @Param('id') id: string,
-    @Body() updatedTag: Partial<{ label: string; icon: string; color: string }>,
-    ) {
-        return this.tagsService.update(+id, updatedTag); // Convertit l'ID en nombre
-    }
+    @Body() updatedTag: Prisma.TagUpdateInput,
+  ) {
+    return await this.tagsService.update(+id, updatedTag); // Convertit l'ID string en number
+  }
 
-    @Delete()
-    delete(@Query('id') id: string) {
-      return this.tagsService.delete(+id);
-    }
-
-
-
+  // Supprimer un tag par ID
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return await this.tagsService.delete(+id); // Convertit l'ID string en number
+  }
 }
