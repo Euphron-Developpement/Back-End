@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Delete,
   Param,
   Put,
@@ -10,6 +11,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
+import { Prisma } from '@prisma/client';
 
 @Controller('category') // Base path for the routes
 export class CategoryController {
@@ -24,31 +26,35 @@ export class CategoryController {
   async findOne(@Param('id') id: string) {
     const category = await this.categoryService.findOne(Number(id));
     if (!category) {
-      throw new HttpException('category not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
     }
     return category;
   }
 
   @Post()
-  create(@Body() category: { label: string }) {
-    return this.categoryService.create(category);
+  async create(@Body() data: Prisma.CategoryCreateInput) {
+    return this.categoryService.create(data);
   }
 
-  @Put(':id')
-  update(
+  @Patch(':id') // Remplacement de PUT par PATCH
+  async update(
     @Param('id') id: string,
-    @Body() updatedCategory: Partial<{ label: string; }>,
+    @Body() updatedData: Prisma.CategoryUpdateInput,
   ) {
-    return this.categoryService.update(+id, updatedCategory); // Convertit l'ID en nombre
+    const category = await this.categoryService.update(Number(id), updatedData);
+    if (!category) {
+      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+    }
+    return category;
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    try {
-      return await this.categoryService.delete(Number(id));
-    } catch (error) {
+    const category = await this.categoryService.delete(Number(id));
+    if (!category) {
       throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
     }
+    return category;
   }
 }
   

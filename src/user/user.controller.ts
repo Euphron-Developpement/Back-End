@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Put,
+  Patch,
   Delete,
   Param,
   Body,
@@ -35,12 +35,16 @@ export class UserController {
     return this.userService.create(data);
   }
 
-  @Put(':id')
+  @Patch(':id') // Utilisation de PATCH pour les mises à jour partielles
   async update(
     @Param('id') id: string,
     @Body() updatedData: Prisma.UserUpdateInput,
   ) {
-    return this.userService.update(Number(id), updatedData);
+    const user = await this.userService.update(Number(id), updatedData);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    return user;
   }
 
   @Delete(':id')
