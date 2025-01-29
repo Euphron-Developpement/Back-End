@@ -10,6 +10,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
+import * as argon2 from 'argon2';
 import { Prisma } from '@prisma/client';
 
 @Controller('users') // Base path for the routes
@@ -20,7 +21,7 @@ export class UserController {
   async findAll() {
     return this.userService.findAll();
   }
-
+  
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const user = await this.userService.findOne(Number(id));
@@ -32,7 +33,14 @@ export class UserController {
 
   @Post()
   async create(@Body() data: Prisma.UserCreateInput) {
-    return this.userService.create(data);
+    try {
+      if (data.password) {
+        data.password = await argon2.hash(data.password); // Hash
+      }
+      return this.userService.create(data);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @Put(':id')
@@ -40,6 +48,9 @@ export class UserController {
     @Param('id') id: string,
     @Body() updatedData: Prisma.UserUpdateInput,
   ) {
+    if (updatedData.password) {
+      updatedData.password = await argon2.hash(updatedData.password as string); // Hash
+    }
     return this.userService.update(Number(id), updatedData);
   }
 
