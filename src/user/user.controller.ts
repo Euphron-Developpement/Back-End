@@ -10,6 +10,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
+import * as argon2 from 'argon2';
 import { Prisma } from '@prisma/client';
 
 @Controller('users') // Base path for the routes
@@ -32,7 +33,14 @@ export class UserController {
 
   @Post()
   async create(@Body() data: Prisma.UserCreateInput) {
-    return this.userService.create(data);
+    try {
+      if (data.password) {
+        data.password = await argon2.hash(data.password); // Hash
+      }
+      return this.userService.create(data);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @Patch(':id') // Utilisation de PATCH pour les mises à jour partielles
@@ -40,11 +48,10 @@ export class UserController {
     @Param('id') id: string,
     @Body() updatedData: Prisma.UserUpdateInput,
   ) {
-    const user = await this.userService.update(Number(id), updatedData);
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    if (updatedData.password) {
+      updatedData.password = await argon2.hash(updatedData.password as string); // Hash
     }
-    return user;
+    return this.userService.update(Number(id), updatedData);
   }
 
   @Delete(':id')
