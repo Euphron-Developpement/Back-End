@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
     environment:
-      - DB_HOST=localhost
+      - DB_HOST=db
       - DB_PORT=4587
       - DB_USER=jarvis
       - DB_PASSWORD=jarvis
@@ -21,7 +21,26 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/dist
-    command: [ "npm", "run", "prod" ]
+    command: [ "npm", "run", "start:prod" ]
+
+  app_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: nest-api-dev
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=4587
+      - DB_USER=jarvis
+      - DB_PASSWORD=jarvis
+      - DB_NAME=euphron
+    volumes:
+      - .:/usr/src/app
+      - ./node_modules:/usr/src/app/node_modules
 
   db:
     image: mariadb:11.5

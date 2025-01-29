@@ -1,32 +1,51 @@
-import { Controller, Get, Post, Delete, Param, Body, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ArticleService } from './article.service';
+import { Prisma } from '@prisma/client';
 
-@Controller('article')
+@Controller('articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.articleService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.articleService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const article = await this.articleService.findOne(Number(id));
+    if (!article) {
+      throw new HttpException('Article not found', HttpStatus.NOT_FOUND);
+    }
+    return article;
   }
 
   @Post()
-  create(@Body() createArticleDto: any) {
-    return this.articleService.create(createArticleDto);
+  async create(@Body() data: Prisma.ArticleCreateInput) {
+    return this.articleService.create(data);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArticleDto: any) {
-    return this.articleService.update(+id, updateArticleDto);
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updatedData: Prisma.ArticleUpdateInput) {
+    return this.articleService.update(Number(id), updatedData);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.articleService.remove(+id);
+  async delete(@Param('id') id: string) {
+    const article = await this.articleService.delete(Number(id));
+    if (!article) {
+      throw new HttpException('Article not found', HttpStatus.NOT_FOUND);
+    }
+    return article;
   }
 }
