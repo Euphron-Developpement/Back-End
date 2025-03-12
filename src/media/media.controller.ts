@@ -1,40 +1,41 @@
-import { Controller, Get, Post, Param, Body, Delete, Patch, Query } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Query } from '@nestjs/common';
 import { MediaService } from './media.service';
+import { Prisma } from '@prisma/client';
 
 @Controller('media')
 export class MediaController {
-    constructor(private readonly mediaService: MediaService) {};
+  constructor(private readonly mediaService: MediaService) {}
 
-    //Récupération de tous les medias
-    @Get()
-    findAll() {
-        return this.mediaService.findAll();
-    }
+  // Récupérer tous les médias
+  @Get()
+  async findAll() {
+    return await this.mediaService.findAll();
+  }
 
-    //Récupération d'un media
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.mediaService.findOne(+id);
-    }
+  // Récupérer un média spécifique par ID
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.mediaService.findOne(+id); // Convertit l'ID string en number
+  }
 
-    //Ajout d'un media
-    @Post()
-    create(@Body() media: { url: string; article_id: number; hero: boolean; type: number; }) {
-        return this.mediaService.create(media);
-    }
+  // Créer un nouveau média
+  @Post()
+  async create(@Body() media: Prisma.MediaCreateInput) {
+    return await this.mediaService.create(media);
+  }
 
-    //Modification d'un media
-    @Patch()
-    update(
-        @Query('id') id: string,
-        @Body() updatedMedia: { url?: string; article_id?: number; hero?: boolean; type?: number; }
-    ) {
-        return this.mediaService.update(+id, updatedMedia);
-    }
-    
-    //Suppresion d'un media
-    @Delete()
-    delete(@Query('id') id: string) {
-        return this.mediaService.delete(+id);
-    }
+  // Mettre à jour un média existant
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updatedMedia: Prisma.MediaUpdateInput,
+  ) {
+    return await this.mediaService.update(+id, updatedMedia); // Convertit l'ID string en number
+  }
+
+  // Supprimer un média par ID
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return await this.mediaService.delete(+id); // Convertit l'ID string en number
+  }
 }

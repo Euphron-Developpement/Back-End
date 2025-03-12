@@ -1,64 +1,56 @@
-import { Injectable } from '@nestjs/common';
-import { media } from '../interfaces/media.interface';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class MediaService {
+  constructor(private readonly prisma: PrismaService) {}
 
-    private medias: media[] = [
-        {
-            id: 1, 
-            url: "https://docs.nestjs.com/controllers#routing",
-            article_id: 2,
-            hero: true,
-            type: 1,
-        },
-        {
-            id: 2, 
-            url: "https://docs.nestjs.com/controllers#routing",
-            article_id: 3,
-            hero: false,
-            type: 2,
-        }
-    ];
+  // 🔹 Récupérer tous les médias
+  async findAll() {
+    return this.prisma.media.findMany();
+  }
 
-    private currentId = 3;
-
-    //Récupération de tous les medias
-    findAll() {
-        return this.medias;
+  // 🔹 Récupérer un média par ID
+  async findOne(id: number) {
+    const media = await this.prisma.media.findUnique({
+      where: { id },
+    });
+    if (!media) {
+      throw new NotFoundException(`Media with ID ${id} not found`);
     }
+    return media;
+  }
 
-    //Récupération d'un media
-    findOne(_id: number) {
-        return this.medias.find((medias) => medias.id === _id);
-    }
+  // 🔹 Créer un média
+  async create(data: Prisma.MediaCreateInput) {
+    return this.prisma.media.create({ data });
+  }
 
-    //Création d'un nouveau media
-    create(media: { url: string; article_id: number ; hero: boolean; type: number;}) {
-        const newMedia = { id: this.currentId++, ...media }; // Ajout d'un ID unique
-        this.medias.push(newMedia);
-        return newMedia;
+  // 🔹 Mettre à jour un média
+  async update(id: number, data: Prisma.MediaUpdateInput) {
+    const media = await this.prisma.media.findUnique({
+      where: { id },
+    });
+    if (!media) {
+      throw new NotFoundException(`Media with ID ${id} not found`);
     }
+    return this.prisma.media.update({
+      where: { id },
+      data,
+    });
+  }
 
-    //Suppresion d'un media
-    delete(id: number) {
-        const mediaIndex = this.medias.findIndex((media) => media.id === id);
-        if (mediaIndex === -1) {
-            return { error: `Media with ID ${id} not found` };
-        }
-    
-        const deletedMedia = this.medias.splice(mediaIndex, 1);
-        return deletedMedia[0];
+  // 🔹 Supprimer un média
+  async delete(id: number) {
+    const media = await this.prisma.media.findUnique({
+      where: { id },
+    });
+    if (!media) {
+      throw new NotFoundException(`Media with ID ${id} not found`);
     }
-
-    //Modification d'un media
-    update(id: number, updatedMedia: Partial<{ url: string; article_id: number; hero: boolean; type: number; }>) {
-        const mediaIndex = this.medias.findIndex((media) => media.id === id);
-        if (mediaIndex === -1) {
-            return { error: `Media with ID ${id} not found` };
-        }
-    
-        this.medias[mediaIndex] = { ...this.medias[mediaIndex], ...updatedMedia };
-        return this.medias[mediaIndex];
-    }
+    return this.prisma.media.delete({
+      where: { id },
+    });
+  }
 }
