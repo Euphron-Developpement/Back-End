@@ -6,33 +6,36 @@ import { Prisma } from '@prisma/client';
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
-  // Récupération de tous les medias
+  // Récupérer tous les médias
   @Get()
   async findAll() {
-    return this.mediaService.findAll();
+    return await this.mediaService.findAll();
   }
 
-  // Récupération d'un media par ID
+  // Récupérer un média spécifique par ID
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.mediaService.findOne(+id);
+    return await this.mediaService.findOne(+id); // Convertit l'ID string en number
   }
 
-  // Création d'un nouveau media
+  // Créer un nouveau média
   @Post()
   async create(@Body() media: Prisma.MediaCreateInput) {
-    return this.mediaService.create(media);
+    return await this.mediaService.create(media);
   }
 
-  // Modification d'un media
+  // Mettre à jour un média existant
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updatedMedia: Prisma.MediaUpdateInput) {
-    return this.mediaService.update(+id, updatedMedia);
+  async update(
+    @Param('id') id: string,
+    @Body() updatedMedia: Prisma.MediaUpdateInput,
+  ) {
+    return await this.mediaService.update(+id, updatedMedia); // Convertit l'ID string en number
   }
 
-  // Suppression d'un media
+  // Supprimer un média par ID
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    return this.mediaService.delete(+id);
+    return await this.mediaService.delete(+id); // Convertit l'ID string en number
   }
 }
