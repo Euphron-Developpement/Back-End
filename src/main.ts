@@ -8,8 +8,10 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter({
       logger: true,
-    })
+    }),
   );
+
+  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle("Euphron API")

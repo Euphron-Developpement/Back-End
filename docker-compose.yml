@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  app:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
@@ -21,9 +21,11 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/dist
+    networks:
+      - euphron
     command: [ "npm", "run", "start:prod" ]
 
-  app_dev:
+  api_dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -41,6 +43,8 @@ services:
     volumes:
       - .:/usr/src/app
       - ./node_modules:/usr/src/app/node_modules
+    networks:
+      - euphron
 
   db:
     image: mariadb:11.5
@@ -54,6 +58,12 @@ services:
       - "4587:3306"
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - euphron
 
 volumes:
   db_data:
+
+networks:
+  euphron:
+    name: euphron

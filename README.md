@@ -5,9 +5,9 @@ API générale d'Euphron - Une API RESTful construite avec NestJS pour gérer le
 ## Configuration du projet
 - Crétion du container docker
 ```bash
-$ docker-compose up app db -d
+$ docker-compose up api db -d
 ```
-> (app ou app-dev en fonction de l'environnement)
+> (api ou api_dev en fonction de l'environnement)
 ### Configuration de l'application
 - Installation des dépendances
 ```bash
