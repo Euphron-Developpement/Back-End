@@ -1,61 +1,48 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  Body,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
-import { Prisma } from '@prisma/client';
+import { Reservation } from '@prisma/client';
 
-@Controller('reservations') // Base path for the routes
+@Controller('reservations')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
-  @Get()
-  async findAll() {
-    return this.reservationService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const reservation = await this.reservationService.findOne(Number(id));
-    if (!reservation) {
-      throw new HttpException('Reservation not found', HttpStatus.NOT_FOUND);
-    }
-    return reservation;
-  }
-
+  // Créer une réservation
   @Post()
-  async create(@Body() data: Prisma.ReservationCreateInput) {
-    return this.reservationService.create(data);
+  async create(@Body() data: any) {
+    console.log("Données reçues :", data); // 🔍 Debugging
+    return this.reservationService.createReservation(data);
   }
 
-  @Patch(':id') // Utilisation de PATCH pour les mises à jour partielles
-  async update(
-    @Param('id') id: string,
-    @Body() updatedData: Prisma.ReservationUpdateInput,
-  ) {
-    const reservation = await this.reservationService.update(
-      Number(id),
-      updatedData,
-    );
-    if (!reservation) {
-      throw new HttpException('Reservation not found', HttpStatus.NOT_FOUND);
-    }
-    return reservation;
+  // Mettre à jour une réservation
+  @Patch(':id')
+  async updateReservation(
+    @Param('id') id: number,
+    @Body() updateReservationDto: {
+      first_name?: string;
+      last_name?: string;
+      handicaps?: { id: number }[];
+      code?: string;
+      pdf?: string; // Correction ici, on accepte une string base64
+    },
+  ): Promise<Reservation> {
+    return this.reservationService.updateReservation(Number(id), updateReservationDto);
   }
 
+  // Récupérer toutes les réservations
+  @Get()
+  async getAllReservations(): Promise<Reservation[]> {
+    return this.reservationService.getAllReservations();
+  }
+
+  // Récupérer une réservation par son ID
+  @Get(':id')
+  async getReservationById(@Param('id') id: number): Promise<Reservation | null> {
+    return this.reservationService.getReservationById(Number(id));
+  }
+
+  // Supprimer une réservation
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    const reservation = await this.reservationService.delete(Number(id));
-    if (!reservation) {
-      throw new HttpException('Reservation not found', HttpStatus.NOT_FOUND);
-    }
-    return reservation;
+  async deleteReservation(@Param('id') id: number): Promise<Reservation> {
+    return this.reservationService.deleteReservation(Number(id));
   }
 }
