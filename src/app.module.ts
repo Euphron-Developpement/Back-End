@@ -13,10 +13,12 @@ import { EventModule } from './event/event.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { OrderService } from './order/order.service';
 import { OrderModule } from './order/order.module';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UserModule, ArticleModule, MediaModule, TagsModule, CategoryModule, OrderModule, ArticleTagsModule, MediaTypeModule, EventModule, ReservationModule],
-  controllers: [AppController],
+  imports: [UserModule, ArticleModule, MediaModule, TagsModule, CategoryModule, OrderModule, ArticleTagsModule, MediaTypeModule, EventModule, ReservationModule, AuthModule],
+  controllers: [AppController, AuthController],
   providers: [AppService, PrismaService, OrderService],
 })
 export class AppModule {}

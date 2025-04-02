@@ -51,7 +51,7 @@ async function main() {
         last_name: faker.person.lastName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
-        role: faker.helpers.arrayElement(['admin', 'editor', 'viewer']),
+        admin: faker.datatype.boolean(), // ← Génère true ou false aléatoirement
       },
     });
     users.push(user);
