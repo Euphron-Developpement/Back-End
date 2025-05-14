@@ -7,12 +7,30 @@ export class ArticleService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(): Promise<Article[]> {
-    return this.prisma.article.findMany();
+    return this.prisma.article.findMany(
+      {
+        include: {
+          category_id: true,
+          author_Id: true,
+          Media: true,
+          Article_Tags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      }
+    );
   }
 
   async findOne(id: number): Promise<Article | null> {
     return this.prisma.article.findUnique({
       where: { id },
+      include: {
+        category_id: true,
+        author_Id: true,
+        Media: true,
+      }
     });
   }
 
