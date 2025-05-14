@@ -41,7 +41,7 @@ async function main() {
         title: faker.lorem.sentence(),
         read_time: faker.number.int({ min: 5, max: 30 }),
         publication_date: faker.date.recent(),
-        content: faker.lorem.paragraphs(3),
+        content: faker.lorem.paragraphs(3).split('\n').map(p => `<p>${p}</p>`).join(''),
         category: randomCategory.id,
         author: randomUser.id,
       },
@@ -62,6 +62,12 @@ async function main() {
 
   // Associer des articles et des tags
   const articles = await prisma.article.findMany();
+
+  const mediaTypes = await Promise.all([
+    prisma.media_Type.create({ data: { label: 'image' } }),
+    prisma.media_Type.create({ data: { label: 'video' } }),
+  ]);
+
   for (const article of articles) {
     const randomTags = faker.helpers.arrayElements(tags, faker.number.int({ min: 1, max: 3 }));
     for (const tag of randomTags) {
@@ -72,6 +78,16 @@ async function main() {
         },
       });
     }
+
+    await prisma.media.create({
+      data: {
+        url: `https://picsum.photos/seed/${article.id}/1200/600`,
+        article: article.id,
+        hero: true,
+        type: mediaTypes[0].id,
+      }
+    });
+
   }
 
   console.log('✅ Seeding terminé avec succès!');
