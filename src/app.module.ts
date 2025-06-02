@@ -15,10 +15,11 @@ import { OrderService } from './order/order.service';
 import { OrderModule } from './order/order.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [UserModule, ArticleModule, MediaModule, TagsModule, CategoryModule, OrderModule, ArticleTagsModule, MediaTypeModule, EventModule, ReservationModule, AuthModule],
-  controllers: [AppController, AuthController],
+  imports: [UserModule, ArticleModule, MediaModule, TagsModule, CategoryModule, OrderModule, ArticleTagsModule, MediaTypeModule, EventModule, ReservationModule, AuthModule, ConfigModule.forRoot({isGlobal: true})],
+  controllers: [AppController],
   providers: [AppService, PrismaService, OrderService],
 })
 export class AppModule {}

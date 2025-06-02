@@ -1,0 +1,8 @@
+# Normalisation automatique
+* text=auto
+
+# Forcer certains fichiers à utiliser LF
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.sh text eol=lf

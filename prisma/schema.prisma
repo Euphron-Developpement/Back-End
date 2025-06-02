@@ -29,12 +29,13 @@ model User {
   id         Int       @id @default(autoincrement())
   first_name String    @db.VarChar(255)
   last_name  String    @db.VarChar(255)
-  email      String    @db.VarChar(255)
+  email      String    @unique @db.VarChar(255) // 👈 Ajout de @unique ici
   password   String    @db.VarChar(255)
   admin      Boolean   @default(false)
   Article    Article[]
   Order      Order[]
 }
+
 
 
 model Tag {
